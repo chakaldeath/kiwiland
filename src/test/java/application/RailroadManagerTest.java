@@ -1,7 +1,9 @@
 package application;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,7 +13,7 @@ import model.Town;
 /**
  * Test class for RailroadManager
  * 
- * @author alexb
+ * @author alejandro perez
  *
  */
 public class RailroadManagerTest {
@@ -22,6 +24,8 @@ public class RailroadManagerTest {
 	private static final Town TOWN_C = Town.valueOf("C");
 	private static final Town TOWN_D = Town.valueOf("D");
 	private static final Town TOWN_E = Town.valueOf("E");
+	
+	private Random rnd = new Random();
 	
 	
 	@Test (expected = IllegalArgumentException.class)
@@ -95,5 +99,41 @@ public class RailroadManagerTest {
 			Assert.assertEquals(expected, ex.getMessage());
 		}
 	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void getTotalRoutesFromTwoTowns_nullOrigin_IllegalArgumentExceptionThrown() {
+		RailroadManager.getTotalRoutesFromTwoTowns(null, TOWN_B.getName());
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void getTotalRoutesFromTwoTowns_nullDestiny_IllegalArgumentExceptionThrown() {
+		RailroadManager.getTotalRoutesFromTwoTowns(TOWN_A.getName(), null);
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void getTotalRoutesFromTwoTowns_originEqualsDestiny_IllegalArgumentExceptionThrown() {
+		RailroadManager.getTotalRoutesFromTwoTowns(TOWN_A.getName(), TOWN_A.getName());
+	}
+	
+	@Test
+	public void getTotalRoutesFromTwoTowns_fromAtoB_return4() {
+		int expected = 4;
+		Assert.assertEquals(expected,RailroadManager.getTotalRoutesFromTwoTowns(TOWN_A.getName(), TOWN_B.getName()));
+	}
+	
+	@Test
+	public void getTotalRoutesFromTwoTowns_fromBtoA_return0() {
+		int expected = 0;
+		Assert.assertEquals(expected,RailroadManager.getTotalRoutesFromTwoTowns(TOWN_B.getName(), TOWN_A.getName()));
+	}
+	
+	@Test
+	public void getTotalRoutesFromTwoTowns_random_returnValue() {
+		String chars = "ABCDE";
+		Assert.assertNotNull(RailroadManager.getTotalRoutesFromTwoTowns(String.valueOf(chars.charAt(rnd.nextInt(chars.length())))
+																				, String.valueOf(chars.charAt(rnd.nextInt(chars.length())))));
+	}
+	
+	
 	
 }

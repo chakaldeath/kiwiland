@@ -62,4 +62,43 @@ public final class RailroadManager {
 		throw new IllegalArgumentException(INVALID_ROUTE_EXCEPTION);
 	}
 
+	/**
+	 * Method to get the total number of possible routes between 2 towns
+	 * 
+	 * @param towns expected 2...n
+	 * @return the totalDistance
+	 */
+	public static int getTotalRoutesFromTwoTowns(String origin, String destiny) {
+		int totalRoutes = 0;
+		String travel = "";
+		
+		if (origin!=null && destiny!=null && !origin.equals(destiny)) {
+			totalRoutes = countTotalRoutes(origin,destiny,travel,totalRoutes);
+		} else {
+			throw new IllegalArgumentException(TOWNS_NUMBER_EXCEPTION);
+		}
+		
+		return totalRoutes;
+	}
+	
+	/**
+	 * Recursive method to guarantee that all possible routes are checked without enter in a infinite loop
+	 * 
+	 * @param origin
+	 * @param destiny
+	 * @param travel all the towns that the train stops
+	 * @param totalRoutes the counter of total possible routes
+	 * @return totalRoutes the counter of total possible routes
+	 */
+	private static int countTotalRoutes(String origin, String destiny, String travel, int totalRoutes) {
+		for (Route route:Town.valueOf(origin).getRoutesList()) {
+			if (route.getDestiny().equals(destiny)) {
+				totalRoutes++;
+			} else if (!travel.contains(route.getDestiny())) {
+				totalRoutes = countTotalRoutes(route.getDestiny(), destiny, travel+route.getDestiny(), totalRoutes);
+			}
+		}
+		return totalRoutes;
+	}
+	
 }
