@@ -1,6 +1,5 @@
 package application;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -132,6 +131,43 @@ public class RailroadManagerTest {
 		String chars = "ABCDE";
 		Assert.assertNotNull(RailroadManager.getTotalRoutesFromTwoTowns(String.valueOf(chars.charAt(rnd.nextInt(chars.length())))
 																				, String.valueOf(chars.charAt(rnd.nextInt(chars.length())))));
+	}
+
+	@Test (expected = IllegalArgumentException.class)
+	public void getMinDistanceFromTwoTowns_nullOrigin_IllegalArgumentExceptionThrown() {
+		RailroadManager.getShortestRouteFromTwoTowns(null, TOWN_B.getName());
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void getMinDistanceFromTwoTowns_nullDestiny_IllegalArgumentExceptionThrown() {
+		RailroadManager.getShortestRouteFromTwoTowns(TOWN_A.getName(), null);
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void getMinDistanceFromTwoTowns_originEqualsDestiny_IllegalArgumentExceptionThrown() {
+		RailroadManager.getShortestRouteFromTwoTowns(TOWN_A.getName(), TOWN_A.getName());
+	}
+
+	@Test
+	public void getMinDistanceFromTwoTowns_fromAtoB_returnAB() {
+		String expected = "AB";
+		Assert.assertEquals(expected,RailroadManager.getShortestRouteFromTwoTowns(TOWN_A.getName(), TOWN_B.getName()));
+	}
+	
+	@Test
+	public void getMinDistanceFromTwoTowns_fromBtoA_noSuchRoute() {
+		String expected = "NO SUCH ROUTE";
+		try{
+			RailroadManager.getShortestRouteFromTwoTowns(TOWN_B.getName(), TOWN_A.getName());
+		} catch (IllegalArgumentException ex) {
+			Assert.assertEquals(expected, ex.getMessage());
+		}
+	}
+	
+	@Test
+	public void getMinDistanceFromTwoTowns_fromAtoC_returnABC() {
+		String expected = "ABC";
+		Assert.assertEquals(expected,RailroadManager.getShortestRouteFromTwoTowns(TOWN_A.getName(), TOWN_C.getName()));
 	}
 	
 	
