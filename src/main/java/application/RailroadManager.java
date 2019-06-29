@@ -1,6 +1,13 @@
 package application;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import model.Route;
 import model.Town;
@@ -48,7 +55,7 @@ public final class RailroadManager {
 	/**
 	 * @param origin Town
 	 * @param destiny Town
-	 * @return the distance between two towns
+	 * @return the distance between two towns directly connected
 	 * @throws RailroadException 
 	 */
 	private static int getDistance(String origin, String destiny) {
@@ -82,11 +89,36 @@ public final class RailroadManager {
 	}
 	
 	/**
-	 * Recursive method to guarantee that all possible routes are checked without enter in a infinite loop
+	 * Method to get the shortest route (travel) between 2 towns
+	 * 
+	 * @param towns expected 2...n
+	 * @return the totalDistance
+	 */
+	public static String getShortestRouteFromTwoTowns(String origin, String destiny) {
+		Map<String, Integer> travels = new HashMap<>();
+		String travel = origin;
+		
+		if (origin!=null && destiny!=null && !origin.equals(destiny)) {
+			getTravelsMap(origin,destiny,travel,travels);
+		} else {
+			throw new IllegalArgumentException(TOWNS_NUMBER_EXCEPTION);
+		}
+		if (travels.isEmpty()) {
+			throw new IllegalArgumentException(INVALID_ROUTE_EXCEPTION);
+		}
+		Set<Entry<String,Integer>> entries = travels.entrySet();
+		List<Entry<String,Integer>> sortedEntries = new ArrayList<>(entries);
+		Collections.sort(sortedEntries, Comparator.comparing(Entry<String, Integer>::getValue));
+		return sortedEntries.get(0).getKey();
+	}
+	
+	/**
+	 * Aimed to get the number of different routes
+	 * Recursive method to guarantee that all possible routes are checked without enter in a infinite loop. 
 	 * 
 	 * @param origin
 	 * @param destiny
-	 * @param travel all the towns that the train stops
+	 * @param travel all the towns that the train has stopped at the moment
 	 * @param totalRoutes the counter of total possible routes
 	 * @return totalRoutes the counter of total possible routes
 	 */
@@ -94,11 +126,35 @@ public final class RailroadManager {
 		for (Route route:Town.valueOf(origin).getRoutesList()) {
 			if (route.getDestiny().equals(destiny)) {
 				totalRoutes++;
-			} else if (!travel.contains(route.getDestiny())) {
+			} else if (!travel.contains(route.getDestiny())) {  // we dont want to stop two times at the same town
 				totalRoutes = countTotalRoutes(route.getDestiny(), destiny, travel+route.getDestiny(), totalRoutes);
 			}
 		}
 		return totalRoutes;
+	}
+	
+	/**
+	 * Aimed to get all the possible routes with each distances
+	 * Recursive method to guarantee that all possible routes are checked without enter in a infinite loop. 
+	 * 
+	 * @param origin
+	 * @param destiny
+	 * @param travel all the towns that the train has stopped at the moment
+	 * @param travels the map of possible routes with its distance
+	 * @return travels the map of possible routes with its distance
+	 */
+	private static Map<String, Integer> getTravelsMap(String origin, String destiny, String travel, Map<String, Integer> travels) {
+		int distance = travels.get(travel)!=null?travels.get(travel):0;
+		travels.remove(travel);
+		for (Route route:Town.valueOf(origin).getRoutesList()) {
+			if (!travel.contains(route.getDestiny())) { // we dont want to stop two times at the same town
+				travels.put(travel + route.getDestiny(), distance + route.getDistance());
+				if (!route.getDestiny().equals(destiny)) {
+					getTravelsMap(route.getDestiny(), destiny, travel+route.getDestiny(), travels);
+				}
+			}
+		}
+		return travels;
 	}
 	
 }
