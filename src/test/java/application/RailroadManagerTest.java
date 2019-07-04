@@ -129,8 +129,13 @@ public class RailroadManagerTest {
 	@Test
 	public void getTotalRoutesFromTwoTowns_random_returnValue() {
 		String chars = "ABCDE";
-		Assert.assertNotNull(RailroadManager.getTotalRoutesFromTwoTowns(String.valueOf(chars.charAt(rnd.nextInt(chars.length())))
-																				, String.valueOf(chars.charAt(rnd.nextInt(chars.length())))));
+		String originTown = "";
+		String destinyTown = "";
+		while (originTown.equals(destinyTown)) {
+			originTown = String.valueOf(chars.charAt(rnd.nextInt(chars.length())));
+			destinyTown = String.valueOf(chars.charAt(rnd.nextInt(chars.length())));
+		}
+		Assert.assertNotNull(RailroadManager.getTotalRoutesFromTwoTowns(originTown,destinyTown));
 	}
 
 	@Test (expected = IllegalArgumentException.class)
