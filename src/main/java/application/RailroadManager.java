@@ -35,7 +35,7 @@ public final class RailroadManager {
 	/**
 	 * Method to get the total distance of a route through many towns (at least 2)
 	 * 
-	 * @param towns expected 2...n
+	 * @param townsList expected 2...n
 	 * @return the totalDistance
 	 */
 	public static int getDistanceRoute(List<String> townsList) {
@@ -72,8 +72,9 @@ public final class RailroadManager {
 	/**
 	 * Method to get the total number of possible routes between 2 towns
 	 * 
-	 * @param towns expected 2...n
-	 * @return the totalDistance
+	 * @param origin
+	 * @param destiny
+	 * @return the total routes between 2 towns
 	 */
 	public static int getTotalRoutesFromTwoTowns(String origin, String destiny) {
 		int totalRoutes = 0;
@@ -91,7 +92,8 @@ public final class RailroadManager {
 	/**
 	 * Method to get the shortest route (travel) between 2 towns
 	 * 
-	 * @param towns expected 2...n
+	 * @param origin
+	 * @param destiny
 	 * @return the totalDistance
 	 */
 	public static String getShortestRouteFromTwoTowns(String origin, String destiny) {
